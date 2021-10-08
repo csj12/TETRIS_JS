@@ -1,3 +1,4 @@
+import BLOCKS from "./blocks.js";
 // DOM
 const playground = document.querySelector(".playground > ul");
 
@@ -5,14 +6,6 @@ const playground = document.querySelector(".playground > ul");
 const GAME_ROWS = 20;
 const GAME_COLS = 10;
 
-const BLOCKS = {
-  tree: [
-    [[2,1],[0,1],[1,0],[1,1]],
-    [[1,2],[0,1],[1,0],[1,1]],
-    [[1,2],[0,1],[2,1],[1,1]],
-    [[2,1],[0,1],[1,0],[1,1]],
-  ]
-}
 
 //variables
 let score = 0;
@@ -24,16 +17,15 @@ const movingItem = {
   type: "tree",
   direction: 0,
   top: 0,
-  left: 0,
+  left: 3,
 };
 
 init()
 
 // functions
 function init(){
-  tempMovingItem = {...movingItem};
-  movingItem.left = 4;
 
+  tempMovingItem = {...movingItem};
   for(let i = 0; i < GAME_ROWS; i++){
     prependNewLine()
   }
@@ -96,6 +88,10 @@ function seizeBlock(){
 }
 
 function generateNewBlock(){
+  const blockArray = Object.entries(BLOCKS);
+  const randomIndex = Math.floor(Math.random() * blockArray.length)
+  
+  movingItem.type = blockArray[randomIndex][0]
   movingItem.top = 0;
   movingItem.left = 3;
   movingItem.direction = 0;
@@ -122,7 +118,7 @@ function changeDirection(){
 }
 
 // event handling
-document.addEventListener("keydown", e=> {
+document.addEventListener("keydown", e => {
   switch(e.keyCode){
     case 39: 
       moveBlock("left", 1);
