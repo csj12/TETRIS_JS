@@ -61,16 +61,14 @@ function renderBlocks(moveType = ""){
     }
     else{
       tempMovingItem = { ...movingItem  }
+
       setTimeout(() => {
-        renderBlocks();
+        renderBlocks()
         if(moveType === "top"){
 
-          seizeBlock();
+          seizeBlock()
         }
-        
-      }, 0)
-      //renderBlocks();
-      //return true;
+      }, 0);
     }
   })
   movingItem.left = left; 
@@ -84,24 +82,25 @@ function seizeBlock(){
     moving.classList.remove("moving");
     moving.classList.add("seized");
   })
-  checkMatch();
+  checkMatch()
 }
 
 function checkMatch(){
   const childNodes = playground.childNodes;
+  let matched = true;
   childNodes.forEach(child => {
     child.children[0].childNodes.forEach(li => {
-      if(!li.childList.contains("seized")){
+      if(!li.classList.contains("seized")){
         matched = false;
       }
     })
     if(matched){
       child.remove();
-      prependNewLine();
+      prependNewLine()
     }
   })
 
-  generateNewBlock();
+  generateNewBlock()
 }
 
 function generateNewBlock(){
@@ -113,7 +112,6 @@ function generateNewBlock(){
 
   const blockArray = Object.entries(BLOCKS);
   const randomIndex = Math.floor(Math.random() * blockArray.length)
-  console.log("1111111111");
   movingItem.type = blockArray[randomIndex][0]
   movingItem.top = 0;
   movingItem.left = 3;
@@ -137,7 +135,7 @@ function moveBlock( moveType, amount){
 function changeDirection(){
   const direction = tempMovingItem.direction;
   direction === 3 ? tempMovingItem.direction = 0 : tempMovingItem.direction += 1;
-  renderBlocks();
+  renderBlocks()
 }
 
 function dropBlock(){
@@ -159,10 +157,10 @@ document.addEventListener("keydown", e => {
       moveBlock("top", 1);
       break;
     case 38:
-      changeDirection();
+      changeDirection()
       break;
     case 32:
-      dropBlock();
+      dropBlock()
       break;
     default:
       break;
