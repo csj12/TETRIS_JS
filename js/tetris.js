@@ -14,7 +14,7 @@ let downInterval;
 let tempMovingItem;
 
 const movingItem = {
-  type: "tree",
+  type: "",
   direction: 0,
   top: 0,
   left: 3,
@@ -29,13 +29,13 @@ function init(){
   for(let i = 0; i < GAME_ROWS; i++){
     prependNewLine()
   }
-  renderBlocks()
+  generateNewBlock()
 }
 
 function prependNewLine(){
   const li = document.createElement("li");
   const ul = document.createElement("ul");
-  for(let j=0; j<10; j++){
+  for(let j=0; j<GAME_COLS; j++){
     const matrix = document.createElement("li");
     ul.prepend(matrix);
   }
@@ -52,7 +52,7 @@ function renderBlocks(moveType = ""){
   BLOCKS[type][direction].forEach(block => {
     const x = block[0] + left;
     const y = block[1] + top;
-    console.log(playground.childNodes[y])
+    
     const target = playground.childNodes[y] ? playground.childNodes[y].childNodes[0].childNodes[x] : null ;
     const isAvailable = checkEmpty(target);
     
@@ -60,8 +60,8 @@ function renderBlocks(moveType = ""){
       target.classList.add(type, "moving");
     }
     else{
-      tempMovingItem = {...movingItem}
-      setTimeout(() =>{
+      tempMovingItem = { ...movingItem  }
+      setTimeout(() => {
         renderBlocks();
         if(moveType === "top"){
 
@@ -70,9 +70,9 @@ function renderBlocks(moveType = ""){
         
       }, 0)
       //renderBlocks();
-      return true;
+      //return true;
     }
-  });
+  })
   movingItem.left = left; 
   movingItem.top = top;
   movingItem.direction = direction;
@@ -84,13 +84,36 @@ function seizeBlock(){
     moving.classList.remove("moving");
     moving.classList.add("seized");
   })
-  generateNewBlock()
+  checkMatch();
+}
+
+function checkMatch(){
+  const childNodes = playground.childNodes;
+  childNodes.forEach(child => {
+    child.children[0].childNodes.forEach(li => {
+      if(!li.childList.contains("seized")){
+        matched = false;
+      }
+    })
+    if(matched){
+      child.remove();
+      prependNewLine();
+    }
+  })
+
+  generateNewBlock();
 }
 
 function generateNewBlock(){
+
+  clearInterval(downInterval);
+  downInterval = setInterval(() => {
+      moveBlock('top', 1)
+  }, duration)
+
   const blockArray = Object.entries(BLOCKS);
   const randomIndex = Math.floor(Math.random() * blockArray.length)
-  
+  console.log("1111111111");
   movingItem.type = blockArray[randomIndex][0]
   movingItem.top = 0;
   movingItem.left = 3;
@@ -117,6 +140,12 @@ function changeDirection(){
   renderBlocks();
 }
 
+function dropBlock(){
+  clearInterval(downInterval);
+  downInterval = setInterval(() => {
+    moveBlock("top", 1)
+  }, 10)
+}
 // event handling
 document.addEventListener("keydown", e => {
   switch(e.keyCode){
@@ -131,6 +160,9 @@ document.addEventListener("keydown", e => {
       break;
     case 38:
       changeDirection();
+      break;
+    case 32:
+      dropBlock();
       break;
     default:
       break;
